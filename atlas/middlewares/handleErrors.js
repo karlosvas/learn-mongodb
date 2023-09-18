@@ -1,5 +1,6 @@
+"use strict"
 import express from "express"
-// Midelware, todos los sitios donde tenemos este id pasara por aqui.
+// Middleware, todos los sitios donde tenemos este id pasara por aqui.
 const app = express()
 export const handleErrors = app.use((err, req, res, next) => {
     console.error(err)

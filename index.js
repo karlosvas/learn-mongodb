@@ -5,13 +5,14 @@ dotenv.config()
 import express from 'express';
 import cors from 'cors'
 import { connectDB } from "./atlas/mongo.js"
-import { Note } from "./atlas/models/Notes.js"
-import { notFound } from "./midelwares/notFound.js"
-import { handleErrors } from "./midelwares/handleErrors.js"
+import { Note } from "./atlas/models/Note.js"
+import { notFound } from "./atlas/middlewares/notFound.js"
+import { handleErrors } from "./atlas/middlewares/handleErrors.js"
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+// app.use(static("/mongodb"))
 
 connectDB()
 
@@ -20,28 +21,25 @@ app.get("/", (req, res) => {
 })
 
 app.get("/api/notes", (req, res) => {
-    Note.find({}).then(notes => {
-        res.json(notes)
-    })
-        .catch(error => {
+    Note.find({})
+        .then(notes => {
+            res.json(notes)
+        }).catch(error => {
             console.error(`Error al obtener las notas: ${error}`);
             res.status(500).json({ error: "Error al obtener las notas" });
         });
 })
 
+// Next se utiliza para dirigirse a la siguiente ruta que coincide con el path, solo se utiliza si no hay respuesta por eso es interesante utilizalo en los .catch.
 app.get("/api/notes/:id", (req, res, next) => {
     const { id } = req.params
-    Note.findById(id).then(note => {
-        if (note) {
-            return res.json(note)
-        } else {
+    Note.findById(id)
+        .then(note => {
+            if (note) return res.json(note)
             res.status(404).end()
-        }
-    }).catch(err => {
-        next(err)
-    })
+        }).catch(err => next(err))
 })
-
+// Puedes hacer next y pasara al siguiente controlador, pero sim pasas next con un error va diorectamente al Midelware que este manejando el error.
 app.put('/api/notes/:id', (req, res, next) => {
     const { id } = req.params
     const note = req.body
@@ -52,19 +50,17 @@ app.put('/api/notes/:id', (req, res, next) => {
     Note.findByIdAndUpdate(id, newNoteInfo, { new: true })
         .then(result => {
             res.json(result)
-        })
+        }).catch(err => next(err))
 })
 
 app.delete('/api/notes/:id', (req, res, next) => {
     const { id } = req.params
-    Note.findByIdAndRemove(id).then(res => {
-        res.status(204).end()
-    }).catch(err => next(err))
-    notes = notes.filter(note => note.id !== id)
-    res.status(204).end()
+    Note.findByIdAndDelete(id)
+        .then(() => { res.status(204).end() })
+        .catch(err => next(err))
 })
 
-app.post("/api/notes", (req, res) => {
+app.post("/api/notes", (req, res, next) => {
     const note = req.body
     if (!note.content) {
         return res.status(400).json({
@@ -78,7 +74,7 @@ app.post("/api/notes", (req, res) => {
     })
     newNote.save().then(savedNote => {
         res.json(savedNote)
-    })
+    }).catch(err => next(err))
 })
 
 // MidelWares

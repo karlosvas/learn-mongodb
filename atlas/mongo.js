@@ -1,4 +1,5 @@
 "use strict";
+// Mongoose
 import mongoose from "mongoose";
 // import { Note } from "./models/Note.js"
 
@@ -16,7 +17,7 @@ export const connectDB = (() => {
         })
 })
 
-
+process.on('uncaughtException', () => mongoose.connection.disconect())
 // Para ver los datos creados
 // Note.find({}).then(result => {
 //     console.log(result)
