@@ -1,0 +1,30 @@
+###
+// Muestra la pagina principal
+GET http://localhost:8080
+###
+// Muestra todas las notas.
+GET http://localhost:8080/api/notes
+###
+// // Busca la nota por id.
+GET http://localhost:8080/api/notes/65089cc857db6a5848b43a01
+###
+// Añade una nota.
+POST http://localhost:8080/api/notes
+Content-Type: application/json
+
+{
+    "content": "Suscribete a karlosvas",
+    "important": true
+}
+###
+// Elimina una nota.
+DELETE http://localhost:8080/api/notes/6508a5318c5599504337748a
+###
+// Actualiza una nota.
+PUT http://localhost:8080/api/notes/65089e26e54ad8f2481e3dac
+Content-Type: application/json
+
+{
+    "content": "dunder mifflin paper company",
+    "important": true
+}

@@ -1,3 +1,4 @@
-password.js
 node_modules
 pnpm-lock.yaml
+.env
+api.http

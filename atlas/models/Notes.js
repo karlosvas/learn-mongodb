@@ -9,6 +9,13 @@ const noteSchema = new Schema({
     price: Number
 })
 
+noteSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
+})
 export const Note = model('Note', noteSchema)
 
 

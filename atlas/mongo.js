@@ -1,10 +1,9 @@
 "use strict";
-import password from "./password.js"
 import mongoose from "mongoose";
 // import { Note } from "./models/Note.js"
 
 export const connectDB = (() => {
-    const connectString = `mongodb+srv://karlosvas:${password}@clusterw.koiqqr0.mongodb.net/?retryWrites=true&w=majority`
+    const connectString = process.env.MONGO_DB_URI
 
     mongoose.connect(connectString, {
         useNewUrlParser: true,
@@ -12,7 +11,6 @@ export const connectDB = (() => {
     })
         .then(() => {
             console.log("Database conected")
-            mongoose.connection.close()
         }).catch(err => {
             console.error(`El error es ${err}`)
         })
